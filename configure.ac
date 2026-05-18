@@ -1,0 +1,196 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT
+AC_CONFIG_SRCDIR([socklib.c])
+
+AC_CONFIG_HEADERS([config.h])
+
+AC_USE_SYSTEM_EXTENSIONS
+
+: ${CFLAGS=-O3 -Wall -DBB_FEATURE_UDPCAST_FEC -DUSE_SYSLOG -DUSE_ASSEMBLER}
+: ${LDFLAGS=-s}
+
+
+dnl Checks for compiler
+AC_PROG_CC
+AC_PROG_GCC_TRADITIONAL
+AC_PROG_INSTALL
+
+dnl Check for Systems
+AC_CANONICAL_HOST
+
+AC_C_CONST
+AC_C_INLINE
+
+
+dnl Checks for libraries.
+
+AC_CHECK_LIB(pthread, pthread_create)
+AC_CHECK_LIB(dl, dlsym)
+
+
+dnl Checks for header files.
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/time.h arpa/inet.h netdb.h \
+sys/select.h sys/sockio.h sys/socket.h sys/param.h memory.h malloc.h signal.h \
+ winsock2.h sys/uio.h getopt.h dlfcn.h string.h stdint.h)
+AC_CHECK_HEADERS(net/if.h netinet/in.h, [], [],
+[AC_INCLUDES_DEFAULT
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+])
+AC_CHECK_HEADERS(termios.h sys/termios.h, [break])
+
+dnl Check for structures
+AC_CHECK_MEMBERS([struct ip_mreqn.imr_ifindex],[],[],[#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif])
+
+dnl Check for types
+AC_CHECK_TYPES(in_addr_t,[],[],[#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif])
+
+AC_CHECK_TYPES(in_port_t,[],[],[#ifdef HAVE_NETINET_IN_H
+#include <in/netinet.h>
+#endif])
+
+
+AC_SYS_LARGEFILE
+AC_TYPE_INT8_T
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INTPTR_T
+AC_TYPE_UINT8_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINTPTR_T
+AC_TYPE_SSIZE_T
+AC_TYPE_SIZE_T
+AC_TYPE_OFF_T
+AC_TYPE_UID_T
+
+AC_CHECK_TYPES(caddr_t)
+AC_CHECK_SIZEOF(size_t)
+AC_CHECK_SIZEOF(time_t)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(long long)
+AC_CHECK_SIZEOF(off_t)
+
+AC_CHECK_FUNCS(htons kill daemon)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(atexit tcsetattr lseek64 snprintf inet_pton inet_aton getopt_long dlsym strtoull strndup)
+
+[
+host_os0=`echo $host_os | sed 's/-/_/g'`
+host_os1=`echo $host_os0 | sed 's/\./_/g'`
+host_os2=`echo $host_os0 | sed 's/^\([^.]*\)\..*$/\1/g'`
+host_os3=`echo $host_os2 | sed 's/^\([^0-9]*\)[0-9]*$/\1/g'`
+host_cpu1=`echo $host_cpu | sed 's/\./_/g'`
+host_vendor1=`echo $host_vendor | sed 's/\./_/g'`
+HOST_ID="-DCPU_$host_cpu1 -DVENDOR_$host_vendor1 -DOS_$host_os1"
+if [ $host_os1 != $host_os2 ] ; then
+	HOST_ID="$HOST_ID -DOS_$host_os2"
+fi
+if [ $host_os1 != $host_os3 ] && [ $host_os2 != $host_os3 ] ; then
+	HOST_ID="$HOST_ID -DOS_$host_os3"
+fi
+
+my_host_os=`echo $host_os1 $host_os2 $host_os3 | sort -u`
+objs=`echo $srcdir/*.c | sed 's/\.c$/.o/' `
+if [ "X$GCC" = "Xyes" ] ; then
+    Wall=-Wall
+    if [ "$host_os3" = sunos ] ; then
+	    Wall=""
+    fi
+    if [ "$host_os3" = solaris ] ; then
+	    CFLAGS="$CFLAGS -D_POSIX_C_SOURCE=200112L"
+	    LIBS="$LIBS -lnsl -lsocket"
+	    Wall=""
+    fi
+    if [ "$host_os3" = ultrix ] ; then
+	    Wall=""
+    fi
+    if [ "$host_os3" = linux ] ; then
+	    CFLAGS="$CFLAGS -fno-strength-reduce"
+    fi
+    if [ "$host_os3" = aux ] ; then
+	    CFLAGS="$CFLAGS -ZP"
+	    MACHDEPLIBS="-lposix -UTIL"
+    fi
+    case "${host}" in
+       arm*-*-linux) CFLAGS="$CFLAGS -mstructure-size-boundary=8";;
+    esac
+    CFLAGS="$CFLAGS $Wall"
+else
+    if [ $host_os3 = hpux ] ; then
+	    CPPFLAGS="$CPPFLAGS -Ae"
+    fi
+
+    if [ $host_os3 = xenix ] ; then
+	    CFLAGS="$CFLAGS -M2e"
+    fi
+fi
+
+if [ $host_os3 = hpux ] ; then
+	    LDFLAGS="$LDFLAGS -z"
+fi
+
+
+if [ $host_vendor = linux ] ; then
+    LDFLAGS="$LDFLAGS -z"
+fi
+
+if [ $host_os3 = xenix ] ; then
+    LDFLAGS="$LDFLAGS -M2e -i -f 5000"
+fi
+
+if [ $host_os2 = sysv4 ] ; then
+    SHLIB="-lc -L/usr/ucblib -lucb"
+else
+    SHLIB=""
+fi
+
+if [ $host_os3 = isc ] ; then
+    CFLAGS="$CFLAGS -D_SYSV3"
+    SHLIB="-lc_s"
+fi
+
+if [ $host_os3 = nextstep ] ; then
+    CFLAGS="$CFLAGS -DBSD"
+    SHLIB=""
+fi
+
+if [ $host_os3 = mingw -o $host_os3 = mingw32msvc ] ; then
+    LIBS="$LIBS -lws2_32 -liphlpapi"
+    EXESUFFIX=".exe"
+fi
+
+if [ -d /usr/5lib ] ; then
+	extralibdir=-L/usr/5lib
+fi
+
+]
+
+AC_SUBST(extraincludedir)
+AC_SUBST(extralibdir)
+AC_SUBST(MACHDEPLIBS)
+AC_SUBST(SHLIB)
+AC_SUBST(LIBS)
+AC_SUBST(EXESUFFIX)
+AC_SUBST(host_cpu)
+AC_SUBST(HOST_ID)
+AC_SUBST(CFLAGS)
+AC_SUBST(CPPFLAGS)
+AC_SUBST(LDFLAGS)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
