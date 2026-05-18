@@ -771,15 +771,15 @@ static THREAD_RETURN netSenderMain(void	*args0)
 	config->sliceSize = config->default_slice_size;
 #ifdef BB_FEATURE_UDPCAST_FEC
 	if((config->flags & FLAG_FEC) &&
-	   (config->sliceSize > 128 * config->fec_stripes))
-	    config->sliceSize = 128 * config->fec_stripes;
+	   (config->sliceSize > 128U * config->fec_stripes))
+	    config->sliceSize = 128U * config->fec_stripes;
 #endif
     }
 
 #ifdef BB_FEATURE_UDPCAST_FEC
     if( (sendst->config->flags & FLAG_FEC) &&
-	config->max_slice_size > config->fec_stripes * 128)
-      config->max_slice_size = config->fec_stripes * 128;
+	config->max_slice_size > config->fec_stripes * 128U)
+      config->max_slice_size = config->fec_stripes * 128U;
 #endif
 
     if(config->sliceSize > config->max_slice_size)
@@ -995,8 +995,11 @@ static void fec_encode_all_stripes(sender_state_t sendst,
     unsigned int leftOver = bytes % config->blockSize;
     unsigned char *fec_data = slice->fec_data;
 
-    unsigned char *fec_blocks[redundancy];
+    unsigned char **fec_blocks = calloc(redundancy, sizeof(*fec_blocks));
     unsigned char *data_blocks[128];
+
+    if (fec_blocks == NULL)
+	udpc_fatal(1, "Out of memory while encoding FEC stripes\n");
 
     if(leftOver) {
 	unsigned char *lastBlock = ADR(nrBlocks - 1, config->blockSize);
@@ -1012,6 +1015,7 @@ static void fec_encode_all_stripes(sender_state_t sendst,
 	fec_encode(config->blockSize, data_blocks, j, fec_blocks, redundancy);
 
     }
+    free(fec_blocks);
 }
 
 

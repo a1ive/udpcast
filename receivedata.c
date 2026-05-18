@@ -551,13 +551,17 @@ static void fec_decode_one_stripe(struct clientState *clst,
     unsigned int leftOver = bytes % config->blockSize;
     unsigned int j;
 
-    unsigned char *fec_blocks[nr_fec_blocks];
-    unsigned int fec_block_nos[nr_fec_blocks];
-    unsigned int erased_blocks[nr_fec_blocks];
+    unsigned char **fec_blocks = calloc(nr_fec_blocks, sizeof(*fec_blocks));
+    unsigned int *fec_block_nos = calloc(nr_fec_blocks, sizeof(*fec_block_nos));
+    unsigned int *erased_blocks = calloc(nr_fec_blocks, sizeof(*erased_blocks));
     unsigned char *data_blocks[128];
 
     unsigned int erasedIdx = stripe;
     unsigned int i;
+
+    if (fec_blocks == NULL || fec_block_nos == NULL || erased_blocks == NULL)
+	udpc_fatal(1, "Out of memory while decoding FEC stripe\n");
+
     for(i=stripe, j=0; i<nrBlocks; i+= stripes) {
 	if(!BIT_ISSET(i, map)) {
 #if DEBUG
@@ -587,6 +591,9 @@ static void fec_decode_one_stripe(struct clientState *clst,
 	data_blocks[j] = ADR(i, config->blockSize);
     fec_decode(config->blockSize,  data_blocks, j, 
 	       fec_blocks,  fec_block_nos, erased_blocks, nr_fec_blocks);
+    free(fec_blocks);
+    free(fec_block_nos);
+    free(erased_blocks);
 }
 
 

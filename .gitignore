@@ -1,0 +1,222 @@
+# Based on github/gitignore VisualStudio.gitignore.
+# https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.env
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Mono auto generated files
+mono_crash.*
+
+# Visual Studio cache/options directory
+.vs/
+
+# Build results
+/build/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+[Dd]ebug/x64/
+[Dd]ebugPublic/x64/
+[Rr]elease/x64/
+[Rr]eleases/x64/
+bin/x64/
+obj/x64/
+[Dd]ebug/x86/
+[Dd]ebugPublic/x86/
+[Rr]elease/x86/
+[Rr]eleases/x86/
+bin/x86/
+obj/x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Aa][Rr][Mm]64[Ee][Cc]/
+bld/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+
+# Build results on Bin directories
+**/[Bb]in/*
+
+# Visual Studio generated files
+Generated\ Files/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+*.received.*
+
+# Files built by Visual Studio / MSVC
+*_i.c
+*_p.c
+*_h.h
+*.aps
+*.cachefile
+*.dbmdl
+*.dll
+*.exe
+*.exp
+*.iobj
+*.idb
+*.ilk
+*.ipdb
+*.lib
+*.log
+*.meta
+*.obj
+*.opendb
+*.opensdf
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+!Directory.Build.rsp
+*.sbr
+*.sdf
+*.suo
+*.tlog
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.VC.db
+*.VC.VC.opendb
+*.vspscc
+*.vssscc
+*.wpftmp.csproj
+.builds
+*.pidb
+*.svclog
+*.scc
+ipch/
+
+# Visual Studio profiler and trace files
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.e2e
+
+# MSBuild binary and structured logs
+*.binlog
+MSBuild_Logs/
+
+# TFS local workspace
+$tf/
+
+# Visual Studio add-ins and analyzers
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+_TeamCity*
+*.dotCover
+.axoCover/*
+!.axoCover/settings.json
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+_NCrunch_*
+.NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+*.mm.*
+AutoTest.Net/
+.sass-cache/
+
+# NuGet and package outputs
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+artifacts/
+.artifacts/
+
+# Publish/package outputs
+publish/
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+PublishScripts/
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.appx
+*.appxbundle
+*.appxupload
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Misc Visual Studio generated files
+ClientBin/
+~$*
+*~
+*.jfm
+*.pfx
+*.publishsettings
+orleans.codegen.cs
+Generated_Code/
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceFabricBackup/
+*.rptproj.bak
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Visual Studio 6 generated files
+*.plg
+*.opt
+*.vbw
+*.dsw
+*.dsp
+*.ncb
+
+# Python Tools for Visual Studio
+**/__pycache__/
+*.pyc
+
+# Node.js Tools for Visual Studio
+.ntvs_analysis.dat
+node_modules/
+
+# VS Code files for mixed-editor workflows
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+
+# Other local IDE history
+**/.localhistory/
+.vshistory/

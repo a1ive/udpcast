@@ -57,7 +57,7 @@ static int printProcessStatus(const char *message, int status)
 /* wait for process.  If process returned abnormally, print message, and
  * exit too.
  */
-int udpc_waitForProcess(int pid, const char *message)
+int udpc_waitForProcess(udpc_pid_t pid, const char *message)
 {
     int status;
 

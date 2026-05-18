@@ -171,7 +171,7 @@ static int mainDispatcher(int *fd, int nr,
     int startNow=0;
     int selected;
     int keyPressed=0;
-    long loopStart = time(0);
+    time_t loopStart = time(0);
 
     if ((udpc_nrParticipants(db) || (net_config->flags &  FLAG_ASYNC)) &&
 	!(net_config->flags &  FLAG_NOKBD) && *console != NULL)
@@ -460,7 +460,7 @@ static int doTransfer(int sock,
     sender_stats_t stats;
     int in;
     int origIn;
-    int pid;
+    udpc_pid_t pid;
     int isPtP = isPointToPoint(db, net_config->flags);
     int printUncompressedPos;
 

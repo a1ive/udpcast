@@ -84,19 +84,21 @@ static inline int pthread_cond_timedwait(pthread_cond_t  *cond,
 					 struct timespec *ts) {
   int r;
   struct timeval tv;
-  long delta;
+  long long delta;
+  DWORD waitTime;
 
   gettimeofday(&tv, NULL);
 
-  delta = (ts->tv_sec - tv.tv_sec) * 1000 + 
-    (ts->tv_nsec / BILLION - tv.tv_usec / MILLION);
+  delta = ((long long)ts->tv_sec - (long long)tv.tv_sec) * 1000 +
+    ((long long)ts->tv_nsec / MILLION - (long long)tv.tv_usec / 1000);
   if(delta < 0)
     delta = 0;
+  waitTime = delta > (long long)MAXDWORD ? INFINITE : (DWORD)delta;
 
   ResetEvent(*cond);
   LeaveCriticalSection(mutex);
   
-  switch(WaitForSingleObject(*cond, delta )) {
+  switch(WaitForSingleObject(*cond, waitTime )) {
   case WAIT_OBJECT_0:
     r=0;
     break;

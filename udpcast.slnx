@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Win32" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="msvc/udp-sender/udp-sender.vcxproj" Id="5114d830-04c7-4e03-8448-1bc1534609b7" />
+  <Project Path="msvc/udp-receiver/udp-receiver.vcxproj" Id="841b2bf3-c964-43f9-b536-81431ab3e46f" />
+</Solution>

@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <limits.h>
 
 #include <fcntl.h>
 
@@ -284,7 +285,12 @@ ssize_t doSend(int s, void *message, size_t len, struct sockaddr_in *to) {
 #ifdef LOSSTEST
     loseSendPacket();
 #endif
-    return sendto(s, message, len, 0, (struct sockaddr*) to, sizeof(*to));
+    if (len > INT_MAX) {
+	errno = EINVAL;
+	return -1;
+    }
+    return sendto(s, message, (int)len, 0,
+		  (struct sockaddr*) to, sizeof(*to));
 }
 
 ssize_t doReceive(int s, void *message, size_t len,
@@ -298,7 +304,11 @@ ssize_t doReceive(int s, void *message, size_t len,
 #ifdef LOSSTEST
     loseRecvPacket(s);
 #endif
-    r = recvfrom(s, message, len, 0, (struct sockaddr *)from, &slen);
+    if (len > INT_MAX) {
+	errno = EINVAL;
+	return -1;
+    }
+    r = recvfrom(s, message, (int)len, 0, (struct sockaddr *)from, &slen);
     if (r < 0)
 	return r;
     port = ntohs(from->sin_port);
@@ -454,7 +464,7 @@ int setMcastDestination(int sock, net_if_t *net_if, struct sockaddr_in *addr) {
 
 #ifdef __MINGW32__
 static MIB_IFROW *getIfRow(MIB_IFTABLE *iftab, DWORD dwIndex) {
-    int j;
+    DWORD j;
 
     /* Find the corresponding interface row (for name and
      * MAC address) */
@@ -469,17 +479,17 @@ static MIB_IFROW *getIfRow(MIB_IFTABLE *iftab, DWORD dwIndex) {
 
 static char *fmtName(MIB_IFROW *ifrow) {
     char *out;
-    int l = ifrow->dwDescrLen+1;
+    size_t l = (size_t)ifrow->dwDescrLen + 1;
     if(ifrow->dwPhysAddrLen)
-	l+=2+3*ifrow->dwPhysAddrLen;
-    out = malloc(ifrow->dwDescrLen+l+1);
+	l += 2 + 3 * (size_t)ifrow->dwPhysAddrLen;
+    out = malloc((size_t)ifrow->dwDescrLen + l + 1);
     if(!out)
 	return NULL;
     memcpy(out, ifrow->bDescr, ifrow->dwDescrLen);
     out[ifrow->dwDescrLen]='\0';
 
     if(ifrow->dwPhysAddrLen) {
-	int k;
+	DWORD k;
 	char *ptr=out+strlen(out);
 	strcpy(ptr, " (");
 	ptr+=2;
@@ -576,7 +586,7 @@ net_if_t *getNetIf(const char *wanted) {
 	int s;
 	size_t wantedLen=0;
 #else /* __MINGW32__ */
-	int i;
+	DWORD i;
 
 	int etherNo=-1;
 	int wantedEtherNo=-2; /* Wanted ethernet interface */
@@ -803,7 +813,7 @@ net_if_t *getNetIf(const char *wanted) {
 		} else if(isEther && wantedEtherNo == etherNo) {
 			goodness=9;
 		} else if(ifrow->dwPhysAddrLen) {
-		    int j;
+		    DWORD j;
 		    const char *ptr=wanted;
 		    for(j=0; *ptr && j<ifrow->dwPhysAddrLen; j++) {
 			int digit = strtoul(ptr, (char**)&ptr, 16);
@@ -921,11 +931,25 @@ int makeSocket(addr_type_t addr_type,
 	return -1;
 #endif
 
+#ifdef WINDOWS
+    {
+	SOCKET rawSocket = socket(PF_INET, SOCK_DGRAM, 0);
+	if (rawSocket == INVALID_SOCKET) {
+	    perror("make socket");
+	    exit(1);
+	}
+	if (rawSocket > INT_MAX) {
+	    udpc_fatal(1, "Socket handle is too large for this build\n");
+	}
+	s = (int)rawSocket;
+    }
+#else
     s = socket(PF_INET, SOCK_DGRAM, 0);
     if (s < 0) {
 	perror("make socket");
 	exit(1);
     }
+#endif
 
     if(addr_type == ADDR_TYPE_MCAST && tmpl != NULL) {
 	ip = tmpl->sin_addr.s_addr;
@@ -1151,15 +1175,22 @@ static void doCopy(const struct msghdr *msg, char *ptr, int n, int dir) {
 
 ssize_t recvmsg(int s, struct msghdr *msg, int flags) {
     ssize_t size=getLength(msg);
-    char *buffer = malloc(size);
+    int copySize;
+    char *buffer;
     int n; /* bytes left to copy */
 
+    if(size < 0 || size > INT_MAX) {
+	errno = EINVAL;
+	return -1;
+    }
+    copySize = (int)size;
+    buffer = malloc((size_t)copySize);
     if(buffer == NULL) {
 	/* Out of memory */
 	errno = ENOMEM;
 	return -1;
     }
-    n = recvfrom(s, buffer, size, flags,
+    n = recvfrom(s, buffer, copySize, flags,
 		 msg->msg_name, &msg->msg_namelen);
     doCopy(msg, buffer, n, 1);
     free(buffer);
@@ -1168,16 +1199,23 @@ ssize_t recvmsg(int s, struct msghdr *msg, int flags) {
 
 ssize_t sendmsg (int fd, const struct msghdr *msg, int flags) {
     ssize_t size=getLength(msg);
-    char *buffer = malloc(size);
+    int copySize;
+    char *buffer;
     int n;
 
+    if(size < 0 || size > INT_MAX) {
+	errno = EINVAL;
+	return -1;
+    }
+    copySize = (int)size;
+    buffer = malloc((size_t)copySize);
     if(buffer == NULL) {
 	/* Out of memory */
 	errno = ENOMEM;
 	return -1;
     }
-    doCopy(msg, buffer, size, 0);
-    n = sendto(fd, buffer, size, flags,
+    doCopy(msg, buffer, copySize, 0);
+    n = sendto(fd, buffer, copySize, flags,
 	       msg->msg_name, msg->msg_namelen);
     free(buffer);
     return n;

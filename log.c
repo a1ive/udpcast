@@ -36,10 +36,12 @@ static int vlogprintf(FILE *logfile, const char *fmt, va_list ap) {
     if(logfile != NULL) {	
 	char buf[9];
 	struct timeval tv;
+	time_t seconds;
 	int r;
 	if(newlineSeen) {
 	    gettimeofday(&tv, NULL);
-	    strftime(buf, sizeof(buf), "%H:%M:%S", localtime(&tv.tv_sec));
+	    seconds = (time_t)tv.tv_sec;
+	    strftime(buf, sizeof(buf), "%H:%M:%S", localtime(&seconds));
 	    fprintf(logfile, "%s.%06ld ", buf, (long) tv.tv_usec);
 	}
 	newlineSeen = (strchr(fmt, '\n') != NULL);

@@ -21,7 +21,7 @@ struct fifo;
 #define doSend udpc_doSend
 
 int openFile(struct disk_config *config);
-int openPipe(struct disk_config *config, int in, int *pid);
+int openPipe(struct disk_config *config, int in, udpc_pid_t *pid);
 int localReader(struct fifo *fifo, int in);
 
 int spawnNetSender(struct fifo *fifo,

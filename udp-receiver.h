@@ -38,7 +38,7 @@ int spawnNetReceiver(struct fifo *fifo,
 int writer(struct fifo *fifo, int fd);
 int openPipe(int disk, 
 	     struct disk_config *disk_config,
-	     int *pipePid);
+	     udpc_pid_t *pipePid);
 ssize_t sendGo(struct client_config *);
 void sendDisconnect(int, struct client_config *);
 int startReceiver(int doWarn,

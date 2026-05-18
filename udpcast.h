@@ -14,6 +14,7 @@
 #endif
 
 #include "socklib.h"
+#include "udpc_process.h"
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -38,7 +39,7 @@ int udpc_makeDataBuffer(int blocksize);
 int udpc_parseCommand(char *pipeName, char **arg);
 
 int udpc_printLongNum(unsigned long long x);
-int udpc_waitForProcess(int pid, const char *message);
+int udpc_waitForProcess(udpc_pid_t pid, const char *message);
 
 struct disk_config {
     int origOutFile;

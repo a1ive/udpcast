@@ -45,7 +45,7 @@ int openFile(struct disk_config *config)
 }
 
 
-int openPipe(struct disk_config *config, int in, int *pidp)
+int openPipe(struct disk_config *config, int in, udpc_pid_t *pidp)
 {
     /**
      * Open the pipe

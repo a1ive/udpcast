@@ -552,10 +552,15 @@ invert_mat(gf *src, unsigned int k)
     unsigned int row, col, i, ix ;
 
     int error = 1 ;
-    unsigned int indxc[k];
-    unsigned int indxr[k];
-    int ipiv[k];
-    gf id_row[k];
+    unsigned int *indxc = malloc(k * sizeof(*indxc));
+    unsigned int *indxr = malloc(k * sizeof(*indxr));
+    int *ipiv = malloc(k * sizeof(*ipiv));
+    gf *id_row = malloc(k * sizeof(*id_row));
+
+    if (indxc == NULL || indxr == NULL || ipiv == NULL || id_row == NULL) {
+	fprintf(stderr, "Out of memory while inverting FEC matrix\n");
+	goto fail;
+    }
 
     memset(id_row, 0, k*sizeof(gf));
     DEB( pivloops=0; pivswaps=0 ; /* diagnostic */ )
@@ -662,6 +667,10 @@ invert_mat(gf *src, unsigned int k)
     }
     error = 0 ;
  fail:
+    free(indxc);
+    free(indxr);
+    free(ipiv);
+    free(id_row);
     return error ;
 }
 
@@ -869,9 +878,14 @@ static inline void resolve(unsigned int blockSize,
 #endif
     /* construct matrix */
     int row;
-    unsigned char matrix[nr_fec_blocks*nr_fec_blocks];
+    unsigned char *matrix = malloc((size_t)nr_fec_blocks * nr_fec_blocks);
     int ptr;
     int r;
+
+    if (matrix == NULL) {
+	fprintf(stderr, "Out of memory while resolving FEC matrix\n");
+	abort();
+    }
 
     /* we pick the submatrix of code that keeps colums corresponding to
      * the erased data blocks, and rows corresponding to the present FEC
@@ -918,6 +932,7 @@ static inline void resolve(unsigned int blockSize,
 	    addmul(target,fec_blocks[col],matrix[ptr],blockSize);
 	}
     }
+    free(matrix);
 }
 
 void fec_decode(unsigned int blockSize,

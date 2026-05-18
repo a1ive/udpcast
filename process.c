@@ -17,8 +17,8 @@ static void dupFd(int src, int target) {
   }
 }
 
-int open2(int in, int out, char **arg, int closeFd) {
-  int pid;
+udpc_pid_t open2(int in, int out, char **arg, int closeFd) {
+  udpc_pid_t pid;
   switch( (pid=fork()) ) {
   case 0: /* child */
 
@@ -43,6 +43,7 @@ int open2(int in, int out, char **arg, int closeFd) {
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 /* Thanks http://lists.gnu.org/archive/html/groff/2003-07/msg00107.html */
 static int dupFd(int src, int target, int *savedFd) {
@@ -69,10 +70,10 @@ static int restoreFd(int src, int target) {
   return 0;
 }
 
-int open2(int in, int out, char **arg, int closeFd) {
+udpc_pid_t open2(int in, int out, char **arg, int closeFd) {
   int parent_in=-1;
   int parent_out=-1;
-  int child;
+  udpc_pid_t child;
 
   dupFd(in, 0, &parent_in);
   dupFd(out, 1, &parent_out);

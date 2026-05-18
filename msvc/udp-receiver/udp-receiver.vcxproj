@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.props" Condition="Exists('..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.props')" />
+  <Import Project="..\..\packages\VC-LTL.5.3.1\build\native\VC-LTL.props" Condition="Exists('..\..\packages\VC-LTL.5.3.1\build\native\VC-LTL.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{841B2BF3-C964-43F9-B536-81431AB3E46F}</ProjectGuid>
+    <RootNamespace>UdpReceiver</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <SupportLTL>true</SupportLTL>
+    <WindowsTargetPlatformMinVersion>5.1.2600.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <SupportLTL>true</SupportLTL>
+    <WindowsTargetPlatformMinVersion>5.1.2600.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <SupportLTL>true</SupportLTL>
+    <WindowsTargetPlatformMinVersion>5.1.2600.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <SupportLTL>true</SupportLTL>
+    <WindowsTargetPlatformMinVersion>5.1.2600.0</WindowsTargetPlatformMinVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)build\msvc\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\msvc\obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>udp-receiver</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir)..\include;$(ProjectDir)..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CONSOLE;NO_BB;BB_FEATURE_UDPCAST_FEC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeLibrary Condition="'$(Configuration)'=='Debug'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)'=='Release'">MultiThreaded</RuntimeLibrary>
+      <Optimization Condition="'$(Configuration)'=='Release'">MaxSpeed</Optimization>
+      <DebugInformationFormat Condition="'$(Configuration)'=='Debug'">ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\console.c" />
+    <ClCompile Include="..\..\fec.c" />
+    <ClCompile Include="..\..\fifo.c" />
+    <ClCompile Include="..\..\log.c" />
+    <ClCompile Include="..\..\process.c" />
+    <ClCompile Include="..\..\produconsum.c" />
+    <ClCompile Include="..\..\receiver-diskio.c" />
+    <ClCompile Include="..\..\receivedata.c" />
+    <ClCompile Include="..\..\socklib.c" />
+    <ClCompile Include="..\..\statistics.c" />
+    <ClCompile Include="..\..\strparse.c" />
+    <ClCompile Include="..\..\udp-receiver.c" />
+    <ClCompile Include="..\..\udpcast.c" />
+    <ClCompile Include="..\..\udpc_version.c" />
+    <ClCompile Include="..\..\udpr-negotiate.c" />
+    <ClCompile Include="..\getopt.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\include\getopt.h" />
+    <ClInclude Include="..\include\unistd.h" />
+    <ClInclude Include="..\include\sys\time.h" />
+    <ClInclude Include="..\..\auto-rate.h" />
+    <ClInclude Include="..\..\console.h" />
+    <ClInclude Include="..\..\fec.h" />
+    <ClInclude Include="..\..\fifo.h" />
+    <ClInclude Include="..\..\libbb_udpcast.h" />
+    <ClInclude Include="..\..\log.h" />
+    <ClInclude Include="..\..\participants.h" />
+    <ClInclude Include="..\..\produconsum.h" />
+    <ClInclude Include="..\..\rate-limit.h" />
+    <ClInclude Include="..\..\rateGovernor.h" />
+    <ClInclude Include="..\..\socklib.h" />
+    <ClInclude Include="..\..\statistics.h" />
+    <ClInclude Include="..\..\strparse.h" />
+    <ClInclude Include="..\..\threads.h" />
+    <ClInclude Include="..\..\udpc_process.h" />
+    <ClInclude Include="..\..\udpc-protoc.h" />
+    <ClInclude Include="..\..\udpc_version.h" />
+    <ClInclude Include="..\..\udp-receiver.h" />
+    <ClInclude Include="..\..\udp-sender.h" />
+    <ClInclude Include="..\..\udpcast.h" />
+    <ClInclude Include="..\..\util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package build files that are missing on this computer. Use NuGet package restore to download them. Missing file: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\VC-LTL.5.3.1\build\native\VC-LTL.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\VC-LTL.5.3.1\build\native\VC-LTL.props'))" />
+    <Error Condition="!Exists('..\..\packages\YY-Thunks.1.2.1\build\native\YY-Thunks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\YY-Thunks.1.2.1\build\native\YY-Thunks.targets'))" />
+    <Error Condition="!Exists('..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.props'))" />
+    <Error Condition="!Exists('..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\YY-Thunks.1.2.1\build\native\YY-Thunks.targets" Condition="Exists('..\..\packages\YY-Thunks.1.2.1\build\native\YY-Thunks.targets')" />
+  <Import Project="..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.targets" Condition="Exists('..\..\packages\YY.NuGet.Import.Helper.1.0.2\build\native\YY.NuGet.Import.Helper.targets')" />
+</Project>

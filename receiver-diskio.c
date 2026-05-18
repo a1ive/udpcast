@@ -64,7 +64,7 @@ int writer(struct fifo *fifo, int outFile) {
 
 int openPipe(int outFile, 
 	     struct disk_config *disk_config,
-	     int *pipePid) {
+	     udpc_pid_t *pipePid) {
     if(disk_config->pipeName != NULL) {
 	char *arg[256];
 	int filedes[2];

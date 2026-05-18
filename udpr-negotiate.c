@@ -125,7 +125,7 @@ int startReceiver(int doWarn,
     int outFile=1;
     int pipedOutFile;
     struct sockaddr_in myIp;
-    int pipePid = 0;
+    udpc_pid_t pipePid = 0;
     int origOutFile;
     int haveServerAddress;
     int ret=0;
